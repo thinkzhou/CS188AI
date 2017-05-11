@@ -191,6 +191,13 @@ class OffensiveReflexAgent(ReflexCaptureAgent):
       if len(invaders) > 0:
         dists = [self.getMazeDistance(currentPos, a.getPosition()) for a in invaders]
         features['invaderDistance'] = min(dists)
+    else:
+      enemies = [successor.getAgentState(i) for i in self.getOpponents(successor)]
+      invaders = [a for a in enemies if a.isPacman and a.getPosition() != None]
+      features['numInvaders'] = len(invaders)
+      if len(invaders) > 0:
+        dists = [self.getMazeDistance(currentPos, a.getPosition()) for a in invaders]
+        features['invaderDistance'] = min(dists)
 
     # Compute distance to the nearest food
 
@@ -203,7 +210,7 @@ class OffensiveReflexAgent(ReflexCaptureAgent):
   def getWeights(self, gameState, action):
     if gameState.getAgentState(self.index).isPacman:
       return {'successorScore': 100, 'distanceToFood': -1,
-            'numInvaders': 5, 'invaderDistance': 10,
+            'numInvaders': 1, 'invaderDistance': 10,
             'foodOnHand': 0}
     else:
       return {'successorScore': 100, 'distanceToFood': -1,
@@ -291,5 +298,5 @@ class DefensiveReflexAgent(ReflexCaptureAgent):
     return features
 
   def getWeights(self, gameState, action):
-    return {'numInvaders': -1000, 'onDefense': 100, 'invaderDistance': -10, 'stop': -100, 'reverse': -2}
+    return {'numInvaders': -100, 'onDefense': 100, 'invaderDistance': -10, 'stop': -100, 'reverse': -2}
 
